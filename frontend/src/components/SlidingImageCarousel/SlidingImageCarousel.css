@@ -1,0 +1,16 @@
+.unsplash-carousel {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 10px;
+  }
+  
+  .carousel-image {
+    flex-shrink: 0;
+    height: 20rem;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  

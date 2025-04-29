@@ -1,0 +1,19 @@
+.material-banner {
+    background: linear-gradient(135deg, #b87c04, #ebb606);
+    border-left: 6px solid #018f01;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    color: #000;
+  }
+  
+  .material-banner h2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .material-banner p {
+    margin: 0.2rem 0;
+    font-size: 1rem;
+  }
+  

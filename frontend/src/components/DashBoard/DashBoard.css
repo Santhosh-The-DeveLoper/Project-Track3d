@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap");
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+}
+
+html {
+    background-color: #333;
+    width: 100%;
+  }
+
+.page {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Assets/background2.jpg") no-repeat center/cover;
+}
+
+.nav {
+    display: flex;
+    justify-content:end;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+    background-color: rgba(51, 51, 51, 0.4); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    height: 4.8rem;
+}
+
+
+.nav .left ul li {
+    list-style-type: none;
+}
+.nav .left ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+.nav .left ul li a:hover {
+    color: #ff6347;
+}
+
+.nav .right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav .right ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.nav .right ul li {
+    text-decoration: none;
+}
+
+.nav .right ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+.nav .right ul li a:hover {
+    color: #ff6347;
+}
+
+.middle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    height: 89vh;
+    width: 100%;
+}
+
+.middle h3 {
+    font-size: 4rem;
+    color: #eee;
+}
+
+.middle h1 {
+    font-size: 3rem;
+    color: #eee;
+}

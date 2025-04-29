@@ -1,0 +1,24 @@
+.fetching {
+    color: #fff;
+}
+.Fetchmaterial {
+    height: 1rem;
+}
+.Fetchmaterial .details label{
+    font-size: 10px;
+}
+.Fetchmaterial .details input{
+    font-size: 10px;
+    height: 1.3rem;
+}
+.fetching button {
+    height: 2.4rem;
+}
+
+.fetching .fetchingbtn1 {
+    background: #2b820b;
+}
+
+.fetching .fetchingbtn2 {
+    background: #d11111;
+}
