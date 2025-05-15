@@ -5,3 +5,101 @@
 .fetchinglist {
     color: #000;
 }
+
+.navx {
+    padding: 0.5rem 1rem;
+    height: 7rem;
+  }
+
+.navx {
+    display: flex;
+    justify-content:end;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+    background-color: rgba(51, 51, 51, 0.4); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    height: 4.8rem;
+}
+
+.navx .right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navx .right ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.navx .right ul li {
+    text-decoration: none;
+}
+
+.navx .right ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+.navx .right ul li a:hover {
+    color: #ff6347;
+}
+
+
+
+@media (max-width: 1024px) {
+    .navx {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1rem;
+    }
+
+    .navx .right ul {
+      flex-direction: column;
+      gap: 0.8rem;
+      width: 100%;
+    }
+  
+    .navx .right ul li a {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .navx {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1rem;
+      height: 11rem;
+    }
+  
+    .navx .right ul {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      width: 100%;
+    }
+  
+    .navx .right ul li a {
+      font-size: 1.2rem;
+    }
+  }
+  
+  
+  @media (max-width: 600px) {
+    .navx {
+      padding: 0.5rem 1rem;
+      height: 9rem;
+    }
+  
+    .navx .right ul {
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+  }
