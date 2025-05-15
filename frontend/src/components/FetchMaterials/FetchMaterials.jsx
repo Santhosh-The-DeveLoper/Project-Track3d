@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MaterialForm from '../FetchMaterialForm/FetchMaterialForm';
+import { Link } from "react-router-dom";
 import './FetchMaterials.css';
 
 function MaterialList() {
@@ -42,6 +43,16 @@ function MaterialList() {
 
   return (
     <div className="materails">
+      <div className="navx">
+        <div className="right">
+          <ul>
+            <li><Link to="/dashboard">Home</Link></li>
+            <li><Link to="/fetchusers">Manage Users</Link></li>
+            <li><Link to="/fetchmaterials">Manage Materials</Link></li>
+            <li><Link to="/">Logout</Link></li>
+          </ul>
+        </div>
+      </div>
       <div>
         <h1 className="list">Materials List</h1>
         <table className="material-table">
