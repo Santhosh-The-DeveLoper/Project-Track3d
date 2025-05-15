@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import './FetchUsers.css';
 
 function UserList() {
@@ -35,6 +36,16 @@ function UserList() {
 
   return (
     <div className="Whited" style={{ padding: "20px" }}>
+      <div className="nav">
+        <div className="right">
+          <ul>
+            <li><Link to="/dashboard">Home</Link></li>
+            <li><Link to="/fetchusers">Manage Users</Link></li>
+            <li><Link to="/fetchmaterials">Manage Materials</Link></li>
+            <li><Link to="/">Logout</Link></li>
+          </ul>
+        </div>
+      </div>
       <h2 className="fetchinglist">Users List</h2>
       <table
         style={{
