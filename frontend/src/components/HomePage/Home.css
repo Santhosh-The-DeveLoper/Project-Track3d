@@ -210,4 +210,70 @@
     height: auto;
   }
 }
-  
+
+@media (max-width: 480px) {
+  .upper h1 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .upper .links ul {
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+
+  .upper .links ul li {
+    margin: 0.3rem 0;
+  }
+
+  .upper .links ul li a {
+    font-size: 0.95rem;
+    width: auto;
+  }
+
+  .wrapper1 {
+    height: auto;
+    padding: 1rem;
+  }
+
+  .wrapper1 .lower {
+    margin-top: 7rem;
+    padding: 0 1rem;
+  }
+
+  .wrapper1 .lower h2 {
+    font-size: 1.5rem;
+  }
+
+  .wrapper1 .lower p {
+    font-size: 0.95rem;
+  }
+
+  .btn-get {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  .carousel-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .recommendation-table,
+  .recommendation-th,
+  .recommendation-td {
+    font-size: 0.85rem;
+  }
+
+  .marker {
+    padding: 1rem;
+    height: auto;
+  }
+
+  .wrapper3 {
+    padding: 20px;
+  }
+}
+
