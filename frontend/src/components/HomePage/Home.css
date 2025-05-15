@@ -210,7 +210,6 @@
     height: auto;
   }
 }
-
 @media (max-width: 480px) {
   .upper h1 {
     font-size: 1.3rem;
@@ -260,11 +259,10 @@
     grid-template-columns: 1fr;
     padding: 1rem;
   }
-
   .recommendation-table,
   .recommendation-th,
   .recommendation-td {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 
   .marker {
@@ -274,6 +272,7 @@
 
   .wrapper3 {
     padding: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
-
