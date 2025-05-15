@@ -36,7 +36,7 @@ function UserList() {
 
   return (
     <div className="Whited" style={{ padding: "20px" }}>
-      <div className="nav">
+      <div className="navx">
         <div className="right">
           <ul>
             <li><Link to="/dashboard">Home</Link></li>
