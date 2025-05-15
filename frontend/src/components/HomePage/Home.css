@@ -276,3 +276,23 @@
     -webkit-overflow-scrolling: touch;
   }
 }
+
+@media (max-width: 480px) {
+  .container-1 {
+    padding: 30px 20px;
+    margin: 5rem auto;
+    width: 90%;
+  }
+
+  .h49 {
+    font-size: 20px;
+  }
+
+  input, button {
+    font-size: 14px;
+  }
+
+  #message {
+    font-size: 14px;
+  }
+}
