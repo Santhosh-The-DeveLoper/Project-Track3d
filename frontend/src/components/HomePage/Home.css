@@ -9,7 +9,7 @@
 .home-page-body {
     background: #fff;
 }
-  .wrapper1 {
+.wrapper1 {
     margin: 0;
     padding: 0;
     height: 55rem;
@@ -18,7 +18,7 @@
     background-position: center;
     margin-bottom: 3rem;
   }
-  .upper {
+.upper {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -26,34 +26,34 @@
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.05));
     padding: 0px 20px 0px 20px;
   }
-  .upper h1 {
+.upper h1 {
     color: #fff;
   }
-  .upper .links {
+.upper .links {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 5rem;
   }
-  .upper .links ul li {
+.upper .links ul li {
     list-style: none;
     margin: 0 20px;
     padding: 0;
     gap: 3rem;
     width: 5rem;
   }
-  .upper .links ul li a {
+.upper .links ul li a {
     text-decoration: none;
     color: #fff;
     font-weight: bold;
     font-size: 2rem;
     width: 19rem;
   }
-  .upper .links ul li a:hover {
+.upper .links ul li a:hover {
     color: #dd7e2a;
     font-size: 1.9rem;
   }
-  .wrapper1 .lower {
+.wrapper1 .lower {
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -61,26 +61,26 @@
     align-items: center;
     margin-top: 15rem;
   }
-  .wrapper1 .lower h2 {
+.wrapper1 .lower h2 {
     font-size: 3rem;
     margin-bottom: 1rem;
   }
-  .wrapper1 .lower p {
+.wrapper1 .lower p {
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-  .inputfeild {
+.inputfeild {
     display: block;
     margin-bottom: 10px;
   }
-  .material-input, select {
+.material-input, select {
     width: 100%;
     padding: 8px;
     margin-top: 4px;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
-  .btn-get {
+.btn-get {
     background-color: #2563eb;
     color: white;
     padding: 10px 16px;
@@ -89,53 +89,98 @@
     margin-top: 10px;
     cursor: pointer;
   }
-  .btn-get:hover {
+.btn-get:hover {
     background-color: #1e40af;
   }
-  .recommendation-table {
+.recommendation-table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
   }
-  .recommendation-table, .recommendation-th, .recommendation-td {
+.recommendation-table, .recommendation-th, .recommendation-td {
     border: 1px solid #000;
     padding: 8px;
     text-align: left;
   }
-  .recommendation-table, .recommendation-th {
+.recommendation-table, .recommendation-th {
     background-color: #f3f4f6;
   }
-  .recommendation-table, .recommendation-td {
+.recommendation-table, .recommendation-td {
     color: #000;
   }
-  .marker {
+
+.information {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25rem;
+  background:  linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Assets/img2.png");
+  background-size: cover;
+  background-position: center;
+  padding: 10px;
+  margin-bottom: 2rem;
+}
+.information-matter {
+  padding: 20px;
+}
+.information-matter p {
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 400;
+}
+.information-img img {
+  height: 22rem;
+  border: none;
+  border-radius: 50%;
+  margin-right: 4rem;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25rem;
+  background:  linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../Assets/img1.jpg");
+  background-size: cover;
+  background-position: center;
+  padding: 10px;
+  margin-bottom: 2rem;
+}
+
+.info .information-matter p {
+  font-size: 1.6rem;
+  color: #fff;
+  font-weight: 400;
+}
+ 
+.marker {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 20rem;
-    background-color: rgb(90, 84, 84);
+    padding: 30px;
     margin-top: 3rem;
   }
 
-  .wrapper2 {
+.wrapper2 {
     padding: 20px;
     max-width: 800px;
     margin: auto;
   }
-  .wrapper2 .inputfeild {
+.wrapper2 .inputfeild {
     color: #000;
   }
-  .wrapper2 .wrapper2h2 {
+.wrapper2 .wrapper2h2 {
     color: #000;
   }
   
-  .wrapper3 {
+.wrapper3 {
     padding: 50px;
     color: #fff;
   }
 
-  .carousel-grid {
+.carousel-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
@@ -178,6 +223,30 @@
   .wrapper1 .lower p {
     font-size: 1.2rem;
   }
+  .information,
+  .info {
+    flex-direction: column;
+    height: auto;
+    padding: 2rem 1rem;
+  }
+  .information-img {
+    order: 1;
+  }
+  .information-img img {
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+    height: 18rem;
+  }
+  .information-matter {
+    order: 2;
+  }
+  .information-matter p {
+    font-size: 1.4rem;
+  }
+
+  .info .information-matter p {
+    font-size: 1.4rem;
+  }
 }
 
 @media (max-width: 600px) {
@@ -209,7 +278,16 @@
   .marker {
     height: auto;
   }
+  .information-matter p,
+  .info .information-matter p {
+    font-size: 1.2rem;
+  }
+
+  .information-img img {
+    height: 15rem;
+  }
 }
+
 @media (max-width: 480px) {
   .upper h1 {
     font-size: 1.3rem;
@@ -275,24 +353,17 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-}
-
-@media (max-width: 480px) {
-  .container-1 {
-    padding: 30px 20px;
-    margin: 5rem auto;
-    width: 90%;
+  .information,
+  .info {
+    padding: 1.5rem 1rem;
   }
 
-  .h49 {
-    font-size: 20px;
+  .information-matter p,
+  .info .information-matter p {
+    font-size: 1rem;
   }
 
-  input, button {
-    font-size: 14px;
-  }
-
-  #message {
-    font-size: 14px;
+  .information-img img {
+    height: 12rem;
   }
 }
