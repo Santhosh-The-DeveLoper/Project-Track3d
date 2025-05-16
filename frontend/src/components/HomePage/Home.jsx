@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Home.css";
 import { Link } from "react-router-dom";
 import MaterialSuggestionBanner from '../MaterialSuggestionBanner/MaterialSuggestionBanner';
@@ -45,9 +45,33 @@ const MaterialRecommendation = () => {
     }
   };
 
+  useEffect(() => {
+  const animatedElements = document.querySelectorAll('.animate-on-scroll');
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        const el = entry.target;
+
+        if (entry.isIntersecting) {
+          el.classList.remove('show'); 
+          void el.offsetWidth;
+
+          el.classList.add('show');
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+
+  animatedElements.forEach(el => observer.observe(el));
+
+  return () => observer.disconnect();
+}, []);
+
   return (
     <div className="home-page-body">
-      <div className="wrapper1">
+      <div className="wrapper1 animate-on-scroll">
         <div className="upper">
           <h1>Construction material recommendation system</h1>
           <div className="links">
@@ -62,7 +86,7 @@ const MaterialRecommendation = () => {
         </div>
       </div>
 
-      <div className="wrapper2">
+      <div className="wrapper2 animate-on-scroll">
         <h2 className="wrapper2h2">Material Recommendation</h2>
         <form onSubmit={handleSubmit}>
           <label className="inputfeild">
@@ -102,10 +126,9 @@ const MaterialRecommendation = () => {
       </div>
 
       {showResults && (
-        <div className="wrapper3">
+        <div className="wrapper3 animate-on-scroll">
           <h3>Recommended Materials</h3>
 
-          {/* ✅ Material Suggestion Banner */}
           <MaterialSuggestionBanner recommendedMaterials={recommendations} />
 
           <table className="recommendation-table">
@@ -140,7 +163,7 @@ const MaterialRecommendation = () => {
         </div>
       )}
 
-      <div className="information">
+      <div className="information animate-on-scroll animate-left">
         <div className="information-matter">
           <p>Selecting the right construction materials is critical to the success of any project. <br />
             From durability and cost to environmental suitability, material choices directly affect a building's strength, sustainability,and lifespan. <br />
@@ -151,7 +174,7 @@ const MaterialRecommendation = () => {
           <img src={constructionImg1} alt="Construction AI" />
         </div>
       </div>
-      <div className="information info">
+      <div className="information info animate-on-scroll animate-right">
         <div className="information-img">
           <img src={constructionImg2} alt="Construction AI" />
         </div>
@@ -159,7 +182,7 @@ const MaterialRecommendation = () => {
           <p>Whether you're constructing in extreme climates, limited by budget, or aiming for eco-friendly solutions, the system intelligently suggests materials that align with your project’s performance and sustainability goals. By analyzing structural needs, environmental conditions, and material properties, it empowers engineers, architects, and builders to make smarter, greener, and more cost-efficient decisions without compromising quality.</p>
         </div>
       </div>
-      <div className="marker">
+      <div className="marker animate-on-scroll">
         <h1>Construction Material Recommendation System</h1><br/>
         <p>
           🏗️Helps users find the most suitable building materials based on their budget, durability needs, and environmental preferences. Powered by intelligent data-driven recommendations and real-time visuals, this platform ensures smarter, safer, and more sustainable construction decisions.
