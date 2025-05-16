@@ -3,6 +3,8 @@ import "./Home.css";
 import { Link } from "react-router-dom";
 import MaterialSuggestionBanner from '../MaterialSuggestionBanner/MaterialSuggestionBanner';
 import SlidingImageCarousel from '../SlidingImageCarousel/SlidingImageCarousel';
+import constructionImg1 from "../Assets/img.png"; 
+import constructionImg2 from "../Assets/img3.jpg"; 
 
 const MaterialRecommendation = () => {
   const [budget, setBudget] = useState("");
@@ -138,6 +140,25 @@ const MaterialRecommendation = () => {
         </div>
       )}
 
+      <div className="information">
+        <div className="information-matter">
+          <p>Selecting the right construction materials is critical to the success of any project. <br />
+            From durability and cost to environmental suitability, material choices directly affect a building's strength, sustainability,and lifespan. <br />
+            Our Construction Material Recommendation System leverages artificial intelligence to analyze project-specific parameters <br />
+            and deliver precise, data-driven recommendations that simplify this complex decision-making process.</p>
+        </div>
+        <div className="information-img">
+          <img src={constructionImg1} alt="Construction AI" />
+        </div>
+      </div>
+      <div className="information info">
+        <div className="information-img">
+          <img src={constructionImg2} alt="Construction AI" />
+        </div>
+        <div className="information-matter">
+          <p>Whether you're constructing in extreme climates, limited by budget, or aiming for eco-friendly solutions, the system intelligently suggests materials that align with your project’s performance and sustainability goals. By analyzing structural needs, environmental conditions, and material properties, it empowers engineers, architects, and builders to make smarter, greener, and more cost-efficient decisions without compromising quality.</p>
+        </div>
+      </div>
       <div className="marker">
         <h1>Construction Material Recommendation System</h1><br/>
         <p>
@@ -152,5 +173,3 @@ const MaterialRecommendation = () => {
 };
 
 export default MaterialRecommendation;
-
-
