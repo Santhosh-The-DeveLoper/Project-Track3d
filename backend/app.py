@@ -1,11 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from bson.objectid import ObjectId
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 import bcrypt
 import jwt
-from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
+import random
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 CORS(app)
@@ -14,21 +18,48 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 
 # MongoDB setup
 client = MongoClient("mongodb+srv://SanthoshKumar12:Santhosh12@cluster-0.yrvboac.mongodb.net/")
-
-# User database
 user_db = client["user_db"]
 users_collection = user_db["users"]
+otp_collection = user_db["otp_verification"]
+pending_users_collection = user_db["pending_users"]
 
-# Admin database
 admin_db = client["admin_db"]
 admin_collection = admin_db["admins"]
 
-# Material database
 db = client["Materials_db"]
 collection = db["Materials"]
 
+# =================== Helper Functions ===================
 
-# ====================== FETCH USERS ======================
+
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+
+def send_otp_email(to_email, otp):
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_username = "attisanthoshkumar156@gmail.com"
+    smtp_password = "shqr zdez dsov jzll"
+
+    subject = "Your OTP Code"
+    body = f"Your OTP code for registration is: {otp}. It will expire in 5 minutes."
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(smtp_username, to_email, msg.as_string())
+        return True
+    except Exception as e:
+        print("Error sending email:", e)
+        return False
+
 
 def convert_user(user):
     return {
@@ -39,162 +70,142 @@ def convert_user(user):
     }
 
 
-@app.route('/users', methods=['GET'])
-def get_users():
-    users = user_db.users.find()
-    users_list = [convert_user(user) for user in users]
-    return jsonify(users_list)
-
-
-@app.route("/users/<user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    result = users_collection.delete_one({"_id": ObjectId(user_id)})
-    if result.deleted_count == 1:
-        return jsonify({"message": "User deleted successfully"}), 200
-    else:
-        return jsonify({"message": "User not found"}), 404
-    
-
-@app.route('/profile', methods=['GET'])
-@jwt_required()
-def profile():
-    user_email = get_jwt_identity() 
-    user = users_collection.find_one({"email": user_email})
-    if user:
-        return jsonify({
-            "username": user["username"],
-            "email": user["email"]
-        }), 200
-    return jsonify({"msg": "User not found"}), 404
-
-
-# ====================== FETCH MATERIALS ======================
-
-
 def serialize(doc):
     doc['_id'] = str(doc['_id'])
     return doc
 
-
-@app.route("/materials", methods=["GET"])
-def get_materials():
-    materials = list(collection.find())
-    return jsonify([serialize(m) for m in materials])
+# =================== Routes ===================
 
 
-@app.route("/materials", methods=["POST"])
-def add_material():
-    data = request.json
-    collection.insert_one(data)
-    return jsonify({"message": "Material added successfully"}), 201
-
-
-@app.route('/materials/<id>', methods=['PUT'], endpoint="update_material")
-def update_material(id):
-    data = request.json
-
-    if '_id' in data:
-        del data['_id']
-
-    result = collection.update_one({"_id": ObjectId(id)}, {"$set": data})
-    
-    if result.matched_count:
-        return jsonify({"message": "Material updated successfully"}), 200
-    else:
-        return jsonify({"error": "Material not found"}), 404
-
-
-@app.route("/materials/<string:id>", methods=["DELETE"])
-def delete_material(id):
-    collection.delete_one({"_id": ObjectId(id)})
-    return jsonify({"message": "Material deleted successfully"})
-
-
-# ====================== USER ROUTES ======================
-
-
-# User Registration
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
-    username = data['username']
-    email = data['email']
-    password = data['password']
+    username = data["username"]
+    email = data["email"]
+    password = data["password"]
 
-    # Check if user already exists
     if users_collection.find_one({"email": email}):
-        return jsonify({"message": "Email already exists"}), 400
+        return jsonify({"message": "Email already registered"}), 400
 
-    # Hash password
-    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    pending_users_collection.delete_many({"email": email})
+    hashed_pw = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    otp = generate_otp()
 
-    # Insert user into database
-    users_collection.insert_one({
+    if not send_otp_email(email, otp):
+        return jsonify({"message": "Failed to send OTP"}), 500
+
+    pending_users_collection.insert_one({
         "username": username,
         "email": email,
-        "password": hashed_pw
+        "password": hashed_pw,
+        "otp": otp,
+        "created_at": datetime.datetime.utcnow()
     })
 
-    return jsonify({"message": "User registered successfully"}), 201
+    return jsonify({"message": "OTP sent to your email"}), 200
 
 
-# User Login
+@app.route('/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.json
+    email = data["email"]
+    otp_input = data["otp"]
+
+    pending_user = pending_users_collection.find_one({"email": email})
+    if not pending_user:
+        return jsonify({"message": "No pending registration found"}), 404
+
+    if (datetime.datetime.utcnow() - pending_user["created_at"]).seconds > 300:
+        pending_users_collection.delete_one({"email": email})
+        return jsonify({"message": "OTP expired"}), 400
+
+    if pending_user["otp"] != otp_input:
+        return jsonify({"message": "Invalid OTP"}), 400
+
+    users_collection.insert_one({
+        "username": pending_user["username"],
+        "email": pending_user["email"],
+        "password": pending_user["password"],
+        "is_verified": True
+    })
+
+    pending_users_collection.delete_one({"email": email})
+    return jsonify({"message": "User successfully registered"}), 201
+
+
 @app.route('/login', methods=['POST'])
 def login():
     try:
         data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
 
-        # Check if request data is present and contains required fields
-        if not data or 'email' not in data or 'password' not in data:
-            return jsonify({"message": "Missing email or password"}), 400
-
-        email = data['email']
-        password = data['password']
-
-        # Find user in the database
         user = users_collection.find_one({"email": email})
         if not user:
-            return jsonify({"message": "Invalid email or password"}), 401
+            return jsonify({"message": "Invalid email or password."}), 401
+        if not user.get("is_verified", False):
+            return jsonify({"message": "Email not verified. Please verify your account."}), 403
+        if not bcrypt.checkpw(password.encode('utf-8'), user["password"]):
+            return jsonify({"message": "Invalid email or password."}), 401
 
-        # Check password
-        if bcrypt.checkpw(password.encode('utf-8'), user['password']):
-            token = jwt.encode(
-                {
-                    "email": email,
-                    "username": user['username'],
-                    "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                },
-                app.config['SECRET_KEY'],
-                algorithm="HS256"
-            )
-            return jsonify({"message": "Login successful", "token": token}), 200
-        else:
-            return jsonify({"message": "Invalid email or password"}), 401
+        token = jwt.encode({
+            "email": user["email"],
+            "username": user["username"],
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        }, app.config["SECRET_KEY"], algorithm="HS256")
+
+        return jsonify({"message": "Login successful", "token": token}), 200
 
     except Exception as e:
-        return jsonify({"message": "An error occurred", "error": str(e)}), 500
+        return jsonify({"message": "An error occurred during login.", "error": str(e)}), 500
 
 
-# Forgot Password (Generate Token)
 @app.route('/forgot-password', methods=['POST'])
 def forgot_password():
     data = request.json
     email = data['email']
-
     user = users_collection.find_one({"email": email})
     if not user:
         return jsonify({"message": "Email not found"}), 404
 
-    reset_token = jwt.encode(
-        {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15)},
-        app.config['SECRET_KEY'],
-        algorithm="HS256"
-    )
+    reset_token = jwt.encode({
+        "email": email,
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
+    }, app.config['SECRET_KEY'], algorithm="HS256")
 
-    return jsonify({"message": "Reset token generated", "token": reset_token}), 200
+    reset_link = f"https://material-recommendation-frontend.vercel.app/reset-password?token={reset_token}"
+
+    subject = "Password Reset Request"
+    body = f"""
+    Hi,
+
+    Click the following link to reset your password. This link is valid for 15 minutes:
+
+    {reset_link}
+
+    If you didn't request a password reset, please ignore this email.
+
+    Thanks.
+    """
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = "attisanthoshkumar156@gmail.com"
+        msg['To'] = email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login("attisanthoshkumar156@gmail.com", "shqr zdez dsov jzll")
+            server.sendmail(msg['From'], msg['To'], msg.as_string())
+
+        return jsonify({"message": "Password reset link sent to your email"}), 200
+    except Exception as e:
+        print("Email sending failed:", e)
+        return jsonify({"message": "Failed to send email"}), 500
 
 
-# Reset Password
 @app.route('/reset-password', methods=['POST'])
 def reset_password():
     data = request.json
@@ -202,59 +213,85 @@ def reset_password():
     new_password = data['new_password']
 
     try:
-        decoded_data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-        email = decoded_data['email']
+        decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        email = decoded['email']
         hashed_pw = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
-
         users_collection.update_one({"email": email}, {"$set": {"password": hashed_pw}})
         return jsonify({"message": "Password reset successful"}), 200
+
     except jwt.ExpiredSignatureError:
-        return jsonify({"message": "Token expired"}), 400
+        return jsonify({"message": "Reset link expired"}), 400
     except jwt.InvalidTokenError:
-        return jsonify({"message": "Invalid token"}), 400
+        return jsonify({"message": "Invalid or tampered reset token"}), 400
 
 
-# ====================== ADMIN ROUTES ======================
+@app.route('/users', methods=['GET'])
+def get_users():
+    users = user_db.users.find()
+    return jsonify([convert_user(user) for user in users])
+
+
+@app.route("/users/<user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    result = users_collection.delete_one({"_id": ObjectId(user_id)})
+    return jsonify({"message": "User deleted" if result.deleted_count else "User not found"}), 200
+
+
+@app.route('/profile', methods=['GET'])
+@jwt_required()
+def profile():
+    email = get_jwt_identity()
+    user = users_collection.find_one({"email": email})
+    if user:
+        return jsonify({"username": user["username"], "email": user["email"]}), 200
+    return jsonify({"message": "User not found"}), 404
+
+
+@app.route("/materials", methods=["GET", "POST"])
+def materials():
+    if request.method == "GET":
+        return jsonify([serialize(doc) for doc in collection.find()])
+    elif request.method == "POST":
+        collection.insert_one(request.json)
+        return jsonify({"message": "Material added"}), 201
+
+
+@app.route("/materials/<id>", methods=["PUT", "DELETE"])
+def modify_material(id):
+    if request.method == "PUT":
+        data = request.json
+        data.pop("_id", None)
+        result = collection.update_one({"_id": ObjectId(id)}, {"$set": data})
+        return jsonify({"message": "Updated" if result.matched_count else "Not found"}), 200
+    elif request.method == "DELETE":
+        collection.delete_one({"_id": ObjectId(id)})
+        return jsonify({"message": "Deleted"}), 200
+
 
 @app.route('/api/login', methods=['POST'])
 def admin_login():
     data = request.json
     username = data.get('username')
     password = data.get('password')
-
     admin = admin_collection.find_one({"username": username})
+    if admin and bcrypt.checkpw(password.encode('utf-8'), admin['password']):
+        return jsonify({"message": "Login successful", "status": "success"}), 200
+    return jsonify({"message": "Invalid credentials", "status": "fail"}), 401
 
-    if admin:
-        if bcrypt.checkpw(password.encode('utf-8'), admin['password']):
-            return jsonify({"message": "Login successful", "status": "success"}), 200
-        else:
-            return jsonify({"message": "Incorrect password", "status": "fail"}), 401
-    else:
-        return jsonify({"message": "Admin not found", "status": "fail"}), 404
-
-
-# ====================== RECOMMEND ======================
 
 @app.route("/recommend", methods=["POST"])
 def recommend_material():
-    """Recommend materials based on user preferences."""
     data = request.json
-    budget = data.get("budget")
-    min_durability = data.get("min_durability")
-    environmental_pref = data.get("environmental_suitability")
-
     query = {
-        "Cost_Per_Unit": {"$lte": budget},
-        "Durability": {"$gte": min_durability}
+        "Cost_Per_Unit": {"$lte": data.get("budget")},
+        "Durability": {"$gte": data.get("min_durability")}
     }
-    if environmental_pref:
-        query["Environmental_Suitability"] = environmental_pref
+    if data.get("environmental_suitability"):
+        query["Environmental_Suitability"] = data["environmental_suitability"]
+    results = list(collection.find(query, {"_id": 0}))
+    return jsonify(results)
 
-    recommended_materials = list(collection.find(query, {"_id": 0}))
-    return jsonify(recommended_materials)
 
-
-# ====================== MAIN ======================
-
+# =================== Main ===================
 if __name__ == '__main__':
     app.run(debug=True)
