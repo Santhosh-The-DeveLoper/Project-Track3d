@@ -35,7 +35,7 @@ function UserList() {
   }, []);
 
   return (
-    <div className="Whited" style={{ padding: "20px" }}>
+    <div className="Whited">
       <div className="navx">
         <div className="right">
           <ul>
@@ -46,33 +46,29 @@ function UserList() {
           </ul>
         </div>
       </div>
+
       <h2 className="fetchinglist">Users List</h2>
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginTop: "20px",
-        }}
-      >
+
+      <table className="table-users">
         <thead>
           <tr>
-            <th style={thStyle}>S.no</th>
-            <th style={thStyle}>Username</th>
-            <th style={thStyle}>Email</th>
-            <th style={thStyle}>Role</th>
-            <th style={thStyle}>Action</th>
+            <th>S.no</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {users.length > 0 ? (
             users.map((user, index) => (
               <tr key={user.id}>
-                <td style={tdStyle}>{index + 1}</td>
-                <td style={tdStyle}>{user.username}</td>
-                <td style={tdStyle}>{user.email}</td>
-                <td style={tdStyle}>User</td>
-                <td style={tdStyle}>
-                  <button onClick={() => handleDelete(user.id)} style={deleteBtnStyle}>
+                <td>{index + 1}</td>
+                <td>{user.username}</td>
+                <td>{user.email}</td>
+                <td>User</td>
+                <td>
+                  <button onClick={() => handleDelete(user.id)} className="delete-btn">
                     Delete
                   </button>
                 </td>
@@ -80,9 +76,7 @@ function UserList() {
             ))
           ) : (
             <tr>
-              <td colSpan="5" style={tdStyle}>
-                No users found.
-              </td>
+              <td colSpan="5">No users found.</td>
             </tr>
           )}
         </tbody>
@@ -91,27 +85,4 @@ function UserList() {
   );
 }
 
-const thStyle = {
-  border: "1px solid black",
-  padding: "10px",
-  backgroundColor: "#eee",
-  color: "#000",
-};
-
-const tdStyle = {
-  border: "1px solid black",
-  padding: "10px",
-  textAlign: "center",
-  color: "#000",
-  fontSize: "18px",
-};
-
-const deleteBtnStyle = {
-  backgroundColor: "red",
-  color: "white",
-  border: "none",
-  padding: "5px 10px",
-  borderRadius: "5px",
-  cursor: "pointer",
-};
 export default UserList;
