@@ -1,44 +1,74 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import "./ResetPassword.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./ResetPassword.css"; 
 
 function ResetPassword() {
     const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get("token");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem("resetToken"); 
+        setMessage("");
+        setError("");
 
         if (!token) {
-            setMessage("Reset token not found. Please request a new one.");
+            setError("Missing or invalid token.");
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setError("Passwords do not match.");
             return;
         }
 
         try {
-            const res = await axios.post("https://material-recommendation-backend.vercel.app/reset-password", { token, new_password: newPassword });
+            const res = await axios.post("https://material-recommendation-backend.vercel.app/reset-password", {
+                token,
+                new_password: newPassword,
+            });
             setMessage(res.data.message);
-            localStorage.removeItem("resetToken"); 
+            setTimeout(() => {
+                navigate("/login");
+            }, 2000);
         } catch (err) {
-            setMessage(err.response.data.message || "Something went wrong");
+            setError(err.response?.data?.message || "Password reset failed");
         }
     };
 
     return (
-        <div class="password">
-            <h2>Reset Password</h2>
+        <div className="container-1">
+            <h2 className="h49">Reset Password</h2>
             <form onSubmit={handleSubmit}>
                 <input
+                    className="inputx"
                     type="password"
-                    placeholder="Enter new password"
+                    placeholder="New password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
                 />
+                <input
+                    className="inputx"
+                    type="password"
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                />
                 <button type="submit">Reset Password</button>
             </form>
-            <p>{message}<Link to="/login"><button type="submit" class="Login12">Login</button></Link></p>
+            <br />
+            {message && <p style={{ color: "green" }}>{message}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
     );
 }
